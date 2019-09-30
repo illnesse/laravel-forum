@@ -90,7 +90,7 @@ class Category extends BaseModel
      */
     public function getThreadsEnabledAttribute()
     {
-        return $this->enable_threads;
+        return $this->accepts_threads;
     }
 
     public function getDeepestChildAttribute(): Category

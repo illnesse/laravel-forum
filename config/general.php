@@ -88,7 +88,7 @@ return [
 
     'validation_rules' => [
         'author_id' => ['integer'],
-        'enable_threads' => ['boolean'],
+        'accepts_threads' => ['boolean'],
         'category_id' => ['integer'],
         'content' => ['min:5'],
         'locked' => ['boolean'],
