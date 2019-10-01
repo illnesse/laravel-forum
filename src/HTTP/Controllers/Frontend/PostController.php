@@ -6,8 +6,36 @@ use Riari\Forum\Frontend\Events\UserCreatingPost;
 use Riari\Forum\Frontend\Events\UserEditingPost;
 use Riari\Forum\Frontend\Events\UserViewingPost;
 
+use Riari\Forum\Models\Category;
+use Riari\Forum\Models\Post;
+use Riari\Forum\Models\Thread;
+
 class PostController extends BaseController
 {
+    protected $categories;
+    protected $threads;
+    protected $posts;
+
+    protected function CategoryModel()
+    {
+        return new Category;
+    }
+
+    protected function ThreadModel()
+    {
+        return new Thread;
+    }
+
+    protected function PostModel()
+    {
+        return new Post;
+    }
+
+    private function sub_array(array $haystack, array $needle)
+    {
+        return array_intersect_key($haystack, array_flip($needle));
+    }
+
     /**
      * GET: Return a post view.
      *
@@ -34,7 +62,8 @@ class PostController extends BaseController
      */
     public function create(Request $request)
     {
-        $thread = $this->api('thread.fetch', $request->route('thread'))->parameters(['with' => ['posts']])->get();
+        $thread = $this->ThreadModel()->find($request->thread);
+//        $thread = $this->api('thread.fetch', $request->route('thread'))->parameters(['with' => ['posts']])->get();
 
         $this->authorize('reply', $thread);
 
@@ -56,21 +85,28 @@ class PostController extends BaseController
      */
     public function store(Request $request)
     {
-        $thread = $this->api('thread.fetch', $request->route('thread'))->parameters(['with' => ['posts']])->get();
+        $thread = $this->ThreadModel()->find($request->thread);
 
-        $this->authorize('reply', $thread);
-
+//        echo $thread; die();
         $post = null;
         if ($request->has('post')) {
             $post = $thread->posts->find($request->input('post'));
         }
 
-        $post = $this->api('post.store')->parameters([
+        $this->validate($request, ['content' => ['required']]);
+
+        $parameters = [
             'thread_id' => $thread->id,
             'author_id' => auth()->user()->getKey(),
             'post_id'   => is_null($post) ? 0 : $post->id,
             'content'   => $request->input('content')
-        ])->post();
+        ];
+
+        $this->authorize('reply', $thread);
+
+        $post = $this->PostModel()->create($this->sub_array($parameters,['thread_id', 'post_id', 'author_id', 'content']));
+        $post->load('thread');
+
 
         $post->thread->touch();
 

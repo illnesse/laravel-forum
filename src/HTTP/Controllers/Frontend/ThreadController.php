@@ -9,27 +9,38 @@ use Riari\Forum\Events\UserMarkingNew;
 use Riari\Forum\Events\UserViewingNew;
 use Riari\Forum\Events\UserViewingThread;
 
-use Riari\Forum\Services\CategoryService;
+use Illuminate\Http\JsonResponse;
+use Riari\Forum\Models\Category;
+use Riari\Forum\Models\Post;
+use Riari\Forum\Models\Thread;
+
+
 
 class ThreadController extends BaseController
 {
-    /** @var CategoryService */
-    protected $service;
+    protected $categories;
+    protected $threads;
+    protected $posts;
 
-    public function __construct(CategoryService $service)
+    protected function CategoryModel()
     {
-        $this->service = $service;
+        return new Category;
     }
 
-    /**
-     * @var Thread
-     */
-    protected $threads;
+    protected function ThreadModel()
+    {
+        return new Thread;
+    }
 
-    /**
-     * @var Post
-     */
-    protected $posts;
+    protected function PostModel()
+    {
+        return new Post;
+    }
+
+    private function sub_array(array $haystack, array $needle)
+    {
+        return array_intersect_key($haystack, array_flip($needle));
+    }
 
     /**
      * GET: Return a new/updated threads view.
@@ -78,33 +89,29 @@ class ThreadController extends BaseController
      */
     public function show(Request $request)
     {
-        $threads = $this->service->getByID($request->category)->threads;
-        $thread = $threads->find($request->thread);
+        $thread = auth()->check() ? $this->ThreadModel()->withTrashed()->find($request->thread) : $this->ThreadModel()->find($request->thread);
 
-//        foreach($threads as $thread)
-//        {
-//            $thread
-//        }
-//            ->getByID($request->thread);
-//        $threads = $category->threads;
-//        echo $thread;
+        if (is_null($thread) || !$thread->exists) {
+            return $this->notFoundResponse();
+        }
 
-//        $thread = $this->api('thread.fetch', $request->route('thread'))
-//                       ->parameters(['include_deleted' => auth()->check()])
-//                       ->get();
+        if ($thread->trashed()) {
+            $this->authorize('delete', $thread);
+        }
+
+        if ($thread->category->private) {
+            $this->authorize('view', $thread->category);
+        }
 
         event(new UserViewingThread($thread));
 
-//        var_dump($thread);
-
         $category = $thread->category;
-//        echo $category;
-//
+
         $categories = [];
-//        if (Gate::allows('moveThreadsFrom', $category)) {
-//            $categories = $this->api('category.index')->parameters(['where' => ['category_id' => 0]], ['where' => ['accepts_threads' => 1]])->get();
-//        }
-//
+        if (Gate::allows('moveThreadsFrom', $category)) {
+            $categories = $this->CategoryModel()->all()->where('category_id',0)->where('accepts_threads',1);
+        }
+
         $posts = $thread->postsPaginated;
 
         return view('forum::thread.show', compact('categories', 'category', 'thread', 'posts'));
@@ -118,7 +125,15 @@ class ThreadController extends BaseController
      */
     public function create(Request $request)
     {
-        $category = $this->api('category.fetch', $request->route('category'))->get();
+        $category = $this->CategoryModel()->find($request->category);
+
+         if (is_null($category) || !$category->exists) {
+             return $this->notFoundResponse();
+         }
+
+         if ($category->private) {
+             $this->authorize('view', $category);
+         }
 
         if (!$category->threadsEnabled) {
             Forum::alert('warning', 'categories.threads_disabled');
@@ -139,7 +154,7 @@ class ThreadController extends BaseController
      */
     public function store(Request $request)
     {
-        $category = $this->api('category.fetch', $request->route('category'))->get();
+        $category = $this->CategoryModel()->find($request->category);
 
         if (!$category->threadsEnabled) {
             Forum::alert('warning', 'categories.threads_disabled');
@@ -147,14 +162,26 @@ class ThreadController extends BaseController
             return redirect(Forum::route('category.show', $category));
         }
 
-        $thread = [
+        $this->validate($request, [
+            'title'     => ['required'],
+            'content'   => ['required']
+        ]);
+
+        $this->authorize('createThreads', $category);
+
+        if (!$category->threadsEnabled) {
+            return $this->buildFailedValidationResponse($request, trans('forum::validation.category_threads_enabled'));
+        }
+
+        $parameters = [
             'author_id'     => auth()->user()->getKey(),
             'category_id'   => $category->id,
             'title'         => $request->input('title'),
             'content'       => $request->input('content')
         ];
 
-        $thread = $this->api('thread.store')->parameters($thread)->post();
+        $thread = $this->ThreadModel()->create($this->sub_array($parameters,['category_id', 'author_id', 'title']));
+        Post::create(['thread_id' => $thread->id] + $this->sub_array($parameters,['author_id', 'content']));
 
         Forum::alert('success', 'threads.created');
 
