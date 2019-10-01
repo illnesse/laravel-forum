@@ -9,38 +9,10 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Riari\Forum\API\Dispatcher;
-use Riari\Forum\Contracts\API\ReceiverContract;
 
-abstract class BaseController extends Controller implements ReceiverContract
+abstract class BaseController extends Controller
 {
     use AuthorizesRequests, ValidatesRequests;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * Create a frontend controller instance.
-     */
-    public function __construct()
-    {
-        $this->dispatcher = new Dispatcher($this);
-    }
-
-    /**
-     * Return a prepared API dispatcher instance.
-     *
-     * @param  string  $route
-     * @param  array  $parameters
-     * @return Dispatcher
-     */
-    protected function api($route, $parameters = [])
-    {
-        $prefix = config('forum.frontend.router.as');
-        return $this->dispatcher->route("{$prefix}api.{$route}", $parameters);
-    }
-
     /**
      * Handle a response from the dispatcher for the given request.
      *

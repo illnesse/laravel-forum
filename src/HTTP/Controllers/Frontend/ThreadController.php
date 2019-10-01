@@ -9,8 +9,18 @@ use Riari\Forum\Events\UserMarkingNew;
 use Riari\Forum\Events\UserViewingNew;
 use Riari\Forum\Events\UserViewingThread;
 
+use Riari\Forum\Services\CategoryService;
+
 class ThreadController extends BaseController
 {
+    /** @var CategoryService */
+    protected $service;
+
+    public function __construct(CategoryService $service)
+    {
+        $this->service = $service;
+    }
+
     /**
      * @var Thread
      */
@@ -68,19 +78,33 @@ class ThreadController extends BaseController
      */
     public function show(Request $request)
     {
-        $thread = $this->api('thread.fetch', $request->route('thread'))
-                       ->parameters(['include_deleted' => auth()->check()])
-                       ->get();
+        $threads = $this->service->getByID($request->category)->threads;
+        $thread = $threads->find($request->thread);
 
-//        event(new UserViewingThread($thread));
+//        foreach($threads as $thread)
+//        {
+//            $thread
+//        }
+//            ->getByID($request->thread);
+//        $threads = $category->threads;
+//        echo $thread;
+
+//        $thread = $this->api('thread.fetch', $request->route('thread'))
+//                       ->parameters(['include_deleted' => auth()->check()])
+//                       ->get();
+
+        event(new UserViewingThread($thread));
+
+//        var_dump($thread);
 
         $category = $thread->category;
-
+//        echo $category;
+//
         $categories = [];
-        if (Gate::allows('moveThreadsFrom', $category)) {
-            $categories = $this->api('category.index')->parameters(['where' => ['category_id' => 0]], ['where' => ['accepts_threads' => 1]])->get();
-        }
-
+//        if (Gate::allows('moveThreadsFrom', $category)) {
+//            $categories = $this->api('category.index')->parameters(['where' => ['category_id' => 0]], ['where' => ['accepts_threads' => 1]])->get();
+//        }
+//
         $posts = $thread->postsPaginated;
 
         return view('forum::thread.show', compact('categories', 'category', 'thread', 'posts'));

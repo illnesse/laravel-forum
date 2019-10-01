@@ -87,7 +87,8 @@ class Forum
                     if ($route == config('forum.frontend.router.as') . 'thread.show') {
                         // The requested route is for a thread; we need to specify the page number and append a hash for
                         // the post
-                        $params['page'] = ceil($model->sequence / $model->getPerPage());
+                        if ($model->getPerPage() > 0 ) $params['page'] = ceil($model->sequence / $model->getPerPage());
+                        else $params['page'] = 1;
                         $append = "#post-{$model->sequence}";
                     } else {
                         // Other post routes require the post parameter
