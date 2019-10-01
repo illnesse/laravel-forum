@@ -37,7 +37,7 @@ class Category extends BaseModel
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->perPage = config('forum.general.pagination.categories');
+        $this->perPage = config('forum.preferences.pagination.categories');
     }
 
     /**

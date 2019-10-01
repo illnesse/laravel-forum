@@ -10,18 +10,15 @@ use Riari\Forum\Events\UserViewingNew;
 use Riari\Forum\Events\UserViewingThread;
 
 use Riari\Forum\Services\CategoryService;
-use Riari\Forum\Services\ThreadService;
 
 class ThreadController extends BaseController
 {
     /** @var CategoryService */
-    protected $categoryService;
-    protected $threadService;
+    protected $service;
 
-    public function __construct(CategoryService $categoryService, ThreadService $threadService)
+    public function __construct(CategoryService $service)
     {
-        $this->categoryService = $categoryService;
-        $this->threadService = $threadService;
+        $this->service = $service;
     }
 
     /**
@@ -81,20 +78,33 @@ class ThreadController extends BaseController
      */
     public function show(Request $request)
     {
-        //$threads = $this->service->getByID($request->thread)->threads;
-        $thread = $this->threadService->getByID($request->thread);
+        $threads = $this->service->getByID($request->category)->threads;
+        $thread = $threads->find($request->thread);
+
+//        foreach($threads as $thread)
+//        {
+//            $thread
+//        }
+//            ->getByID($request->thread);
+//        $threads = $category->threads;
+//        echo $thread;
 
 //        $thread = $this->api('thread.fetch', $request->route('thread'))
 //                       ->parameters(['include_deleted' => auth()->check()])
 //                       ->get();
 
         event(new UserViewingThread($thread));
-        $category = $thread->category;
-        $categories = [];
-        if (Gate::allows('moveThreadsFrom', $category)) {
-            $categories = $this->categoryService->getAll()->where('category_id', 0)->where('accepts_threads', 1);
-        }
 
+//        var_dump($thread);
+
+        $category = $thread->category;
+//        echo $category;
+//
+        $categories = [];
+//        if (Gate::allows('moveThreadsFrom', $category)) {
+//            $categories = $this->api('category.index')->parameters(['where' => ['category_id' => 0]], ['where' => ['accepts_threads' => 1]])->get();
+//        }
+//
         $posts = $thread->postsPaginated;
 
         return view('forum::thread.show', compact('categories', 'category', 'thread', 'posts'));
@@ -108,7 +118,7 @@ class ThreadController extends BaseController
      */
     public function create(Request $request)
     {
-        $category = $this->categoryService->getByID($request->category);
+        $category = $this->api('category.fetch', $request->route('category'))->get();
 
         if (!$category->threadsEnabled) {
             Forum::alert('warning', 'categories.threads_disabled');
@@ -129,7 +139,7 @@ class ThreadController extends BaseController
      */
     public function store(Request $request)
     {
-        $category = $this->categoryService->getByID($request->category);
+        $category = $this->api('category.fetch', $request->route('category'))->get();
 
         if (!$category->threadsEnabled) {
             Forum::alert('warning', 'categories.threads_disabled');
@@ -137,14 +147,14 @@ class ThreadController extends BaseController
             return redirect(Forum::route('category.show', $category));
         }
 
-        $attributes = [
+        $thread = [
             'author_id'     => auth()->user()->getKey(),
             'category_id'   => $category->id,
             'title'         => $request->input('title'),
             'content'       => $request->input('content')
         ];
 
-        $thread = $this->threadService->create($attributes);
+        $thread = $this->api('thread.store')->parameters($thread)->post();
 
         Forum::alert('success', 'threads.created');
 
@@ -178,7 +188,7 @@ class ThreadController extends BaseController
     {
         $this->validate($request, ['action' => 'in:delete,permadelete']);
 
-        $permanent = !config('forum.general.soft_deletes') || ($request->input('action') == 'permadelete');
+        $permanent = !config('forum.preferences.soft_deletes') || ($request->input('action') == 'permadelete');
 
         $parameters = $request->all();
         $parameters['force'] = $permanent ? 1 : 0;
@@ -203,7 +213,7 @@ class ThreadController extends BaseController
         $parameters = $request->all();
 
         $parameters['force'] = 0;
-        if (!config('forum.general.soft_deletes') || ($request->input('action') == 'permadelete')) {
+        if (!config('forum.preferences.soft_deletes') || ($request->input('action') == 'permadelete')) {
             $parameters['force'] = 1;
         }
 

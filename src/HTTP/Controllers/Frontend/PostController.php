@@ -6,10 +6,6 @@ use Riari\Forum\Frontend\Events\UserCreatingPost;
 use Riari\Forum\Frontend\Events\UserEditingPost;
 use Riari\Forum\Frontend\Events\UserViewingPost;
 
-use Riari\Forum\Services\CategoryService;
-use Riari\Forum\Services\ThreadService;
-use Riari\Forum\Services\PostService;
-
 class PostController extends BaseController
 {
     /**
@@ -134,7 +130,7 @@ class PostController extends BaseController
      */
     public function destroy(Request $request)
     {
-        $permanent = !config('forum.general.soft_deletes');
+        $permanent = !config('forum.preferences.soft_deletes');
 
         $parameters = $request->all();
         $parameters['force'] = $permanent ? 1 : 0;
@@ -159,7 +155,7 @@ class PostController extends BaseController
         $parameters = $request->all();
 
         $parameters['force'] = 0;
-        if (!config('forum.general.soft_deletes') || ($request->input('action') == 'permadelete')) {
+        if (!config('forum.preferences.soft_deletes') || ($request->input('action') == 'permadelete')) {
             $parameters['force'] = 1;
         }
 
