@@ -35,7 +35,7 @@ class Post extends BaseModel
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setPerPage(config('forum.preferences.pagination.posts'));
+        $this->setPerPage(config('forum.general.pagination.posts'));
     }
 
     /**
