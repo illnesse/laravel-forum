@@ -4,10 +4,10 @@ use Forum;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
-use Riari\Forum\Frontend\Events\UserCreatingThread;
-use Riari\Forum\Frontend\Events\UserMarkingNew;
-use Riari\Forum\Frontend\Events\UserViewingNew;
-use Riari\Forum\Frontend\Events\UserViewingThread;
+use Riari\Forum\Events\UserCreatingThread;
+use Riari\Forum\Events\UserMarkingNew;
+use Riari\Forum\Events\UserViewingNew;
+use Riari\Forum\Events\UserViewingThread;
 
 class ThreadController extends BaseController
 {
@@ -57,7 +57,7 @@ class ThreadController extends BaseController
         }
 
         Forum::alert('success', 'threads.marked_read');
-        return redirect(config('forum.routing.prefix'));
+        return redirect(config('forum.frontend.router.prefix'));
     }
 
     /**
@@ -72,7 +72,7 @@ class ThreadController extends BaseController
                        ->parameters(['include_deleted' => auth()->check()])
                        ->get();
 
-        event(new UserViewingThread($thread));
+//        event(new UserViewingThread($thread));
 
         $category = $thread->category;
 

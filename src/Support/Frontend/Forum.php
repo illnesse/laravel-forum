@@ -84,7 +84,7 @@ class Forum
                         'thread_slug' => static::slugify($model->thread->title),
                     ];
 
-                    if ($route == config('forum.routing.as') . 'thread.show') {
+                    if ($route == config('forum.frontend.router.as') . 'thread.show') {
                         // The requested route is for a thread; we need to specify the page number and append a hash for
                         // the post
                         $params['page'] = ceil($model->sequence / $model->getPerPage());
