@@ -51,13 +51,13 @@ class PostController extends BaseController
      */
     public function fetch($id, Request $request)
     {
-        $post = $this->model()->find($id);
-
-        if (is_null($post) || !$post->exists) {
-            return $this->notFoundResponse();
-        }
-
-        return $this->response($post);
+//        $post = $this->model()->find($id);
+//
+//        if (is_null($post) || !$post->exists) {
+//            return $this->notFoundResponse();
+//        }
+//
+//        return $this->response($post);
     }
 
     /**
@@ -68,14 +68,14 @@ class PostController extends BaseController
      */
     public function store(Request $request)
     {
-        $this->validate($request, ['thread_id' => ['required'], 'author_id' => ['required'], 'content' => ['required']]);
-
-        $thread = Thread::find($request->input('thread_id'));
-        $this->authorize('reply', $thread);
-
-        $post = $this->model()->create($request->only(['thread_id', 'post_id', 'author_id', 'content']));
-        $post->load('thread');
-
-        return $this->response($post, $this->trans('created'), 201);
+//        $this->validate($request, ['thread_id' => ['required'], 'author_id' => ['required'], 'content' => ['required']]);
+//
+//        $thread = Thread::find($request->input('thread_id'));
+//        $this->authorize('reply', $thread);
+//
+//        $post = $this->model()->create($request->only(['thread_id', 'post_id', 'author_id', 'content']));
+//        $post->load('thread');
+//
+//        return $this->response($post, $this->trans('created'), 201);
     }
 }
