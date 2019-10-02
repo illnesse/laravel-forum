@@ -37,21 +37,41 @@ abstract class BaseController extends Controller
         return $response->isNotFound() ? abort(404) : $response->getOriginalContent();
     }
 
-    /**
-     * Helper: Bulk action response.
-     *
-     * @param  Collection  $models
-     * @param  string  $transKey
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    protected function bulkActionResponse(Collection $models, $transKey)
+    protected function updateModel($model, array $attributes, $authorize = [])
     {
-        if ($models->count()) {
-            Forum::alert('success', $transKey, $models->count());
-        } else {
-            Forum::alert('warning', 'general.invalid_selection');
+        if (is_null($model) || !$model->exists) {
+            return $this->notFoundResponse();
         }
 
-        return redirect()->back();
+        $this->parseAuthorization($model, $authorize);
+
+        $model->update($attributes);
+
+        return $this->response($model, 'updated');
+    }
+
+    protected function parseAuthorization($model, $authorize = [])
+    {
+        if (!empty($authorize)) {
+            // We need to authorize this change
+
+            if (is_string($authorize)) {
+                // Only an ability name was given, so use $model
+                $authorize = [$authorize, $model];
+            }
+
+            list($ability, $authorizeModel) = $authorize;
+
+            $this->authorize($ability, $authorizeModel);
+        }
+    }
+
+    protected function response($data, $message = "", $code = 200)
+    {
+        $message = empty($message) ? [] : compact('message');
+
+        return (request()->ajax() || request()->wantsJson())
+            ? new JsonResponse($message + compact('data'), $code)
+            : new Response($data, $code);
     }
 }

@@ -2,9 +2,9 @@
 
 use Forum;
 use Illuminate\Http\Request;
-use Riari\Forum\Frontend\Events\UserCreatingPost;
-use Riari\Forum\Frontend\Events\UserEditingPost;
-use Riari\Forum\Frontend\Events\UserViewingPost;
+use Riari\Forum\Events\UserCreatingPost;
+use Riari\Forum\Events\UserEditingPost;
+use Riari\Forum\Events\UserViewingPost;
 
 use Riari\Forum\Models\Category;
 use Riari\Forum\Models\Post;
@@ -123,7 +123,7 @@ class PostController extends BaseController
      */
     public function edit(Request $request)
     {
-        $post = $this->api('post.fetch', $request->route('post'))->get();
+        $post = $this->PostModel()->find($request->route('post'));
 
         event(new UserEditingPost($post));
 
@@ -147,15 +147,16 @@ class PostController extends BaseController
      */
     public function update(Request $request)
     {
-        $post = $this->api('post.fetch', $request->route('post'))->get();
+        $post = $this->PostModel()->find($request->route('post'));
+        $thread = $post->thread;
 
         $this->authorize('edit', $post);
 
-        $post = $this->api('post.update', $request->route('post'))->parameters($request->only('content'))->patch();
+        $post = $this->updateModel($this->PostModel()->find($post->id), $this->sub_array($request->all(),['content']), 'edit');
 
         Forum::alert('success', 'posts.updated');
 
-        return redirect(Forum::route('thread.show', $post));
+        return redirect(Forum::route('thread.show', $thread));
     }
 
     /**

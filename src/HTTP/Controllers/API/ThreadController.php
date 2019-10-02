@@ -56,22 +56,22 @@ class ThreadController extends BaseController
      */
     public function fetch($id, Request $request)
     {
-        $thread = $this->model();
-        $thread = $request->input('include_deleted') ? $thread->withTrashed()->find($id) : $thread->find($id);
-
-        if (is_null($thread) || !$thread->exists) {
-            return $this->notFoundResponse();
-        }
-
-        if ($thread->trashed()) {
-            $this->authorize('delete', $thread);
-        }
-
-        if ($thread->category->private) {
-            $this->authorize('view', $thread->category);
-        }
-
-        return $this->response($thread);
+//        $thread = $this->model();
+//        $thread = $request->input('include_deleted') ? $thread->withTrashed()->find($id) : $thread->find($id);
+//
+//        if (is_null($thread) || !$thread->exists) {
+//            return $this->notFoundResponse();
+//        }
+//
+//        if ($thread->trashed()) {
+//            $this->authorize('delete', $thread);
+//        }
+//
+//        if ($thread->category->private) {
+//            $this->authorize('view', $thread->category);
+//        }
+//
+//        return $this->response($thread);
     }
 
     /**
@@ -82,24 +82,24 @@ class ThreadController extends BaseController
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'author_id' => ['required', 'integer'],
-            'title'     => ['required'],
-            'content'   => ['required']
-        ]);
-
-        $category = Category::find($request->input('category_id'));
-
-        $this->authorize('createThreads', $category);
-
-        if (!$category->threadsEnabled) {
-            return $this->buildFailedValidationResponse($request, trans('forum::validation.category_threads_enabled'));
-        }
-
-        $thread = $this->model()->create($request->only(['category_id', 'author_id', 'title']));
-        Post::create(['thread_id' => $thread->id] + $request->only('author_id', 'content'));
-
-        return $this->response($thread, 201);
+//        $this->validate($request, [
+//            'author_id' => ['required', 'integer'],
+//            'title'     => ['required'],
+//            'content'   => ['required']
+//        ]);
+//
+//        $category = Category::find($request->input('category_id'));
+//
+//        $this->authorize('createThreads', $category);
+//
+//        if (!$category->threadsEnabled) {
+//            return $this->buildFailedValidationResponse($request, trans('forum::validation.category_threads_enabled'));
+//        }
+//
+//        $thread = $this->model()->create($request->only(['category_id', 'author_id', 'title']));
+//        Post::create(['thread_id' => $thread->id] + $request->only('author_id', 'content'));
+//
+//        return $this->response($thread, 201);
     }
 
     /**
