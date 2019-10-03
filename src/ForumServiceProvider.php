@@ -27,6 +27,7 @@ class ForumServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/api.php' => config_path('forum.api.php'),
             __DIR__.'/../config/frontend.php' => config_path('forum.frontend.php'),
+            __DIR__.'/../config/news.php' => config_path('forum.news.php'),
             __DIR__.'/../config/general.php' => config_path('forum.general.php'),
             __DIR__.'/../config/integration.php' => config_path('forum.integration.php')
         ], 'config');
@@ -39,9 +40,10 @@ class ForumServiceProvider extends ServiceProvider
             __DIR__.'/../translations/' => resource_path('lang/vendor/forum'),
         ], 'translations');
 
-        foreach (['api', 'frontend', 'general', 'integration'] as $name) {
+        foreach (['api', 'frontend', 'news', 'general', 'integration'] as $name) {
             $this->mergeConfigFrom(__DIR__."/../config/{$name}.php", "forum.{$name}");
         }
+
 
         if (config('forum.api.enabled')) {
             $router->group(config('forum.api.router'), function ($r) {
@@ -56,6 +58,10 @@ class ForumServiceProvider extends ServiceProvider
 
             $router->group(config('forum.frontend.router'), function ($r) {
                 require __DIR__.'/../routes/frontend.php';
+            });
+
+            $router->group(config('forum.news.router'), function ($r) {
+                require __DIR__.'/../routes/news.php';
             });
 
             $this->loadViewsFrom(__DIR__.'/../views', 'forum');

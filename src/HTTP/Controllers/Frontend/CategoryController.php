@@ -42,7 +42,7 @@ class CategoryController extends BaseController
 
     public function index(Request $request): View
     {
-        $newsid = config('forum.frontend.news_category_id');
+        $newsid = config('forum.news.news_category_id');
         $categories = $this->CategoryModel()->where("id", "!=", $newsid)->get()->sortBy("weight");
         event(new UserViewingIndex);
         return view('forum::category.index', compact('categories'));
