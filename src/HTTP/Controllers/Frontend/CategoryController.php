@@ -62,6 +62,23 @@ class CategoryController extends BaseController
         return view('forum::category.show', compact('categories', 'category', 'threads'));
     }
 
+
+    public function shownews(Request $request): View
+    {
+        $newsid = config('forum.news.news_category_id');
+        $category = $this->CategoryModel()->find($newsid);
+        event(new UserViewingCategory($category));
+
+        $categories = [];
+        if (Gate::allows('moveCategories')) {
+            $categories = $this->CategoryModel()->all();
+        }
+
+        $threads = $category->threadsPaginated;
+        return view('forum::category.show', compact('categories', 'category', 'threads'));
+    }
+
+
     public function store(StoreCategory $request): RedirectResponse
     {
          $this->validate($request, [

@@ -53,7 +53,7 @@ class Forum
      */
     public static function route($route, $model = null)
     {
-        if (!Str::startsWith($route, config('forum.frontend.router.as'))) {
+        if ((!Str::startsWith($route, config('forum.frontend.router.as'))) && (!Str::startsWith($route, config('forum.news.router.as')))) {
             $route = config('forum.frontend.router.as') . $route;
         }
 
@@ -107,48 +107,48 @@ class Forum
      * @param  Router  $router
      * @return void
      */
-    public static function routes(Router $router)
-    {
-        $controllers = config('forum.frontend.controllers');
-
-        // Forum index
-        $router->get('/', ['as' => 'index', 'uses' => "{$controllers['category']}@index"]);
-
-        // New/updated threads
-        $router->get('new', ['as' => 'index-new', 'uses' => "{$controllers['thread']}@indexNew"]);
-        $router->patch('new', ['as' => 'mark-new', 'uses' => "{$controllers['thread']}@markNew"]);
-
-        // Categories
-        $router->post('category/create', ['as' => 'category.store', 'uses' => "{$controllers['category']}@store"]);
-        $router->group(['prefix' => '{category}-{category_slug}'], function ($router) use ($controllers) {
-            $router->get('/', ['as' => 'category.show', 'uses' => "{$controllers['category']}@show"]);
-            $router->patch('/', ['as' => 'category.update', 'uses' => "{$controllers['category']}@update"]);
-            $router->delete('/', ['as' => 'category.delete', 'uses' => "{$controllers['category']}@destroy"]);
-
-            // Threads
-            $router->get('{thread}-{thread_slug}', ['as' => 'thread.show', 'uses' => "{$controllers['thread']}@show"]);
-            $router->get('thread/create', ['as' => 'thread.create', 'uses' => "{$controllers['thread']}@create"]);
-            $router->post('thread/create', ['as' => 'thread.store', 'uses' => "{$controllers['thread']}@store"]);
-            $router->patch('{thread}-{thread_slug}', ['as' => 'thread.update', 'uses' => "{$controllers['thread']}@update"]);
-            $router->delete('{thread}-{thread_slug}', ['as' => 'thread.delete', 'uses' => "{$controllers['thread']}@destroy"]);
-
-            // Posts
-            $router->get('{thread}-{thread_slug}/post/{post}', ['as' => 'post.show', 'uses' => "{$controllers['post']}@show"]);
-            $router->get('{thread}-{thread_slug}/reply', ['as' => 'post.create', 'uses' => "{$controllers['post']}@create"]);
-            $router->post('{thread}-{thread_slug}/reply', ['as' => 'post.store', 'uses' => "{$controllers['post']}@store"]);
-            $router->get('{thread}-{thread_slug}/post/{post}/edit', ['as' => 'post.edit', 'uses' => "{$controllers['post']}@edit"]);
-            $router->patch('{thread}-{thread_slug}/{post}', ['as' => 'post.update', 'uses' => "{$controllers['post']}@update"]);
-            $router->delete('{thread}-{thread_slug}/{post}', ['as' => 'post.delete', 'uses' => "{$controllers['post']}@destroy"]);
-        });
-
-        // Bulk actions
-        $router->group(['prefix' => 'bulk', 'as' => 'bulk.'], function ($router) use ($controllers) {
-            $router->patch('thread', ['as' => 'thread.update', 'uses' => "{$controllers['thread']}@bulkUpdate"]);
-            $router->delete('thread', ['as' => 'thread.delete', 'uses' => "{$controllers['thread']}@bulkDestroy"]);
-            $router->patch('post', ['as' => 'post.update', 'uses' => "{$controllers['post']}@bulkUpdate"]);
-            $router->delete('post', ['as' => 'post.delete', 'uses' => "{$controllers['post']}@bulkDestroy"]);
-        });
-    }
+//    public static function routes(Router $router)
+//    {
+//        $controllers = config('forum.frontend.controllers');
+//
+//        // Forum index
+//        $router->get('/', ['as' => 'index', 'uses' => "{$controllers['category']}@index"]);
+//
+//        // New/updated threads
+//        $router->get('new', ['as' => 'index-new', 'uses' => "{$controllers['thread']}@indexNew"]);
+//        $router->patch('new', ['as' => 'mark-new', 'uses' => "{$controllers['thread']}@markNew"]);
+//
+//        // Categories
+//        $router->post('category/create', ['as' => 'category.store', 'uses' => "{$controllers['category']}@store"]);
+//        $router->group(['prefix' => '{category}-{category_slug}'], function ($router) use ($controllers) {
+//            $router->get('/', ['as' => 'category.show', 'uses' => "{$controllers['category']}@show"]);
+//            $router->patch('/', ['as' => 'category.update', 'uses' => "{$controllers['category']}@update"]);
+//            $router->delete('/', ['as' => 'category.delete', 'uses' => "{$controllers['category']}@destroy"]);
+//
+//            // Threads
+//            $router->get('{thread}-{thread_slug}', ['as' => 'thread.show', 'uses' => "{$controllers['thread']}@show"]);
+//            $router->get('thread/create', ['as' => 'thread.create', 'uses' => "{$controllers['thread']}@create"]);
+//            $router->post('thread/create', ['as' => 'thread.store', 'uses' => "{$controllers['thread']}@store"]);
+//            $router->patch('{thread}-{thread_slug}', ['as' => 'thread.update', 'uses' => "{$controllers['thread']}@update"]);
+//            $router->delete('{thread}-{thread_slug}', ['as' => 'thread.delete', 'uses' => "{$controllers['thread']}@destroy"]);
+//
+//            // Posts
+//            $router->get('{thread}-{thread_slug}/post/{post}', ['as' => 'post.show', 'uses' => "{$controllers['post']}@show"]);
+//            $router->get('{thread}-{thread_slug}/reply', ['as' => 'post.create', 'uses' => "{$controllers['post']}@create"]);
+//            $router->post('{thread}-{thread_slug}/reply', ['as' => 'post.store', 'uses' => "{$controllers['post']}@store"]);
+//            $router->get('{thread}-{thread_slug}/post/{post}/edit', ['as' => 'post.edit', 'uses' => "{$controllers['post']}@edit"]);
+//            $router->patch('{thread}-{thread_slug}/{post}', ['as' => 'post.update', 'uses' => "{$controllers['post']}@update"]);
+//            $router->delete('{thread}-{thread_slug}/{post}', ['as' => 'post.delete', 'uses' => "{$controllers['post']}@destroy"]);
+//        });
+//
+//        // Bulk actions
+//        $router->group(['prefix' => 'bulk', 'as' => 'bulk.'], function ($router) use ($controllers) {
+//            $router->patch('thread', ['as' => 'thread.update', 'uses' => "{$controllers['thread']}@bulkUpdate"]);
+//            $router->delete('thread', ['as' => 'thread.delete', 'uses' => "{$controllers['thread']}@bulkDestroy"]);
+//            $router->patch('post', ['as' => 'post.update', 'uses' => "{$controllers['post']}@bulkUpdate"]);
+//            $router->delete('post', ['as' => 'post.delete', 'uses' => "{$controllers['post']}@bulkDestroy"]);
+//        });
+//    }
 
     /**
      * Convert the given string to a URL-friendly slug.

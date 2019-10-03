@@ -6,10 +6,10 @@ return [
 
     'router' => [
         'prefix' => '/news',
-        'as' => 'forum.',
+        'as' => 'news.',
         'api_prefix' => 'api',
-        'thread_prefix' => 't',
-        'category_prefix' => 'c',
+        'thread_prefix' => 'nt',
+        'category_prefix' => 'nc',
         'namespace' => '\Riari\Forum\Http\Controllers\Frontend',
         'middleware' => ['web','auth']
     ],

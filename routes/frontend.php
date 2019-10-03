@@ -21,7 +21,7 @@ $r->group(['prefix' => $threadPrefix . '/{thread}-{thread_slug}'], function ($r)
     $r->get('/', ['as' => 'thread.show', 'uses' => 'ThreadController@show']);
     $r->patch('/', ['as' => 'thread.update', 'uses' => 'ThreadController@update']);
     $r->delete('/', ['as' => 'thread.delete', 'uses' => 'ThreadController@destroy']);
-    
+
     $r->get('post/{post}', ['as' => 'post.show', 'uses' => 'PostController@show']);
     $r->get('reply', ['as' => 'post.create', 'uses' => 'PostController@create']);
     $r->post('reply', ['as' => 'post.store', 'uses' => 'PostController@store']);

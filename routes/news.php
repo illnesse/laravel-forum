@@ -1,6 +1,6 @@
 <?php
 
-$r->get('/', ['as' => 'index', 'uses' => 'CategoryController@index']);
+$r->get('/', ['as' => 'category.show', 'uses' => 'CategoryController@shownews']);
 
 $r->get('new', ['as' => 'new.index', 'uses' => 'ThreadController@indexNew']);
 $r->patch('new', ['as' => 'new.mark-read', 'uses' => 'ThreadController@markNewAsRead']);
