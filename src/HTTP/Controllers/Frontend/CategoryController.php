@@ -16,6 +16,7 @@ use Riari\Forum\Models\Thread;
 
 class CategoryController extends BaseController
 {
+    /*
     protected $categories;
     protected $threads;
     protected $posts;
@@ -166,4 +167,5 @@ class CategoryController extends BaseController
 
         return redirect(config('forum.frontend.router.prefix'));
     }
+    */
 }

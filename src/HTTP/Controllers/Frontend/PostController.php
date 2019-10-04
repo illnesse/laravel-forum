@@ -12,6 +12,7 @@ use Riari\Forum\Models\Thread;
 
 class PostController extends BaseController
 {
+    /*
     protected $categories;
     protected $threads;
     protected $posts;
@@ -36,12 +37,6 @@ class PostController extends BaseController
         return array_intersect_key($haystack, array_flip($needle));
     }
 
-    /**
-     * GET: Return a post view.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request)
     {
         $post = $this->api('post.fetch', $request->route('post'))->parameters(['with' => ['thread', 'thread.category', 'parent']])->get();
@@ -54,12 +49,6 @@ class PostController extends BaseController
         return view('forum::post.show', compact('category', 'thread', 'post'));
     }
 
-    /**
-     * GET: Return a 'create post' (thread reply) view.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function create(Request $request)
     {
         $thread = $this->ThreadModel()->find($request->thread);
@@ -77,17 +66,10 @@ class PostController extends BaseController
         return view('forum::post.create', compact('thread', 'post'));
     }
 
-    /**
-     * POST: Create a post.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request)
     {
         $thread = $this->ThreadModel()->find($request->thread);
 
-//        echo $thread; die();
         $post = null;
         if ($request->has('post')) {
             $post = $thread->posts->find($request->input('post'));
@@ -115,12 +97,6 @@ class PostController extends BaseController
         return redirect(Forum::route('thread.show', $post));
     }
 
-    /**
-     * GET: Return an 'edit post' view.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Request $request)
     {
         $post = $this->PostModel()->find($request->route('post'));
@@ -139,12 +115,6 @@ class PostController extends BaseController
         return view('forum::post.edit', compact('category', 'thread', 'post'));
     }
 
-    /**
-     * PATCH: Update an existing post.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(Request $request)
     {
         $post = $this->PostModel()->find($request->route('post'));
@@ -159,12 +129,6 @@ class PostController extends BaseController
         return redirect(Forum::route('thread.show', $thread));
     }
 
-    /**
-     * DELETE: Delete a post.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function destroy(Request $request)
     {
         $permanent = !config('forum.general.soft_deletes');
@@ -179,12 +143,6 @@ class PostController extends BaseController
         return redirect(Forum::route('thread.show', $post->thread));
     }
 
-    /**
-     * DELETE: Delete posts in bulk.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function bulkDestroy(Request $request)
     {
         $this->validate($request, ['action' => 'in:delete,permadelete']);
@@ -201,12 +159,6 @@ class PostController extends BaseController
         return $this->bulkActionResponse($posts, 'posts.deleted');
     }
 
-    /**
-     * PATCH: Update posts in bulk.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function bulkUpdate(Request $request)
     {
         $this->validate($request, ['action' => 'in:restore']);
@@ -217,4 +169,5 @@ class PostController extends BaseController
 
         return $this->bulkActionResponse($threads, 'posts.updated');
     }
+    */
 }

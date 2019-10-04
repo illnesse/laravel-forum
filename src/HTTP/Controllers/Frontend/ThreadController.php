@@ -18,6 +18,7 @@ use Riari\Forum\Models\Thread;
 
 class ThreadController extends BaseController
 {
+    /*
     protected $categories;
     protected $threads;
     protected $posts;
@@ -42,11 +43,6 @@ class ThreadController extends BaseController
         return array_intersect_key($haystack, array_flip($needle));
     }
 
-    /**
-     * GET: Return a new/updated threads view.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function indexNew()
     {
         $threads = $this->api('thread.index-new')->get();
@@ -56,13 +52,7 @@ class ThreadController extends BaseController
         return view('forum::thread.index-new', compact('threads'));
     }
 
-    /**
-     * PATCH: Mark new/updated threads as read for the current user.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function markNewAsRead(Request $request)
+    public function markNew(Request $request)
     {
         $threads = $this->api('thread.mark-new')->parameters($request->only('category_id'))->patch();
 
@@ -81,12 +71,6 @@ class ThreadController extends BaseController
         return redirect(config('forum.frontend.router.prefix'));
     }
 
-    /**
-     * GET: Return a thread view.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request)
     {
         $thread = auth()->check() ? $this->ThreadModel()->withTrashed()->find($request->thread) : $this->ThreadModel()->find($request->thread);
@@ -117,12 +101,6 @@ class ThreadController extends BaseController
         return view('forum::thread.show', compact('categories', 'category', 'thread', 'posts'));
     }
 
-    /**
-     * GET: Return a 'create thread' view.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function create(Request $request)
     {
         $category = $this->CategoryModel()->find($request->category);
@@ -146,12 +124,6 @@ class ThreadController extends BaseController
         return view('forum::thread.create', compact('category'));
     }
 
-    /**
-     * POST: Store a new thread.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request)
     {
         $category = $this->CategoryModel()->find($request->category);
@@ -188,12 +160,6 @@ class ThreadController extends BaseController
         return redirect(Forum::route('thread.show', $thread));
     }
 
-    /**
-     * PATCH: Update a thread.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(Request $request)
     {
         $action = $request->input('action');
@@ -205,12 +171,6 @@ class ThreadController extends BaseController
         return redirect(Forum::route('thread.show', $thread));
     }
 
-    /**
-     * DELETE: Delete a thread.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function destroy(Request $request)
     {
         $this->validate($request, ['action' => 'in:delete,permadelete']);
@@ -227,12 +187,6 @@ class ThreadController extends BaseController
         return redirect($permanent ? Forum::route('category.show', $thread->category) : Forum::route('thread.show', $thread));
     }
 
-    /**
-     * DELETE: Delete threads in bulk.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function bulkDestroy(Request $request)
     {
         $this->validate($request, ['action' => 'in:delete,permadelete']);
@@ -249,12 +203,6 @@ class ThreadController extends BaseController
         return $this->bulkActionResponse($threads, 'threads.deleted');
     }
 
-    /**
-     * PATCH: Update threads in bulk.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function bulkUpdate(Request $request)
     {
         $this->validate($request, ['action' => 'in:restore,move,pin,unpin,lock,unlock']);
@@ -265,4 +213,5 @@ class ThreadController extends BaseController
 
         return $this->bulkActionResponse($threads, 'threads.updated');
     }
+    */
 }
