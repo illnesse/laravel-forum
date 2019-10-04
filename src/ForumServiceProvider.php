@@ -41,7 +41,7 @@ class ForumServiceProvider extends ServiceProvider
         ], 'translations');
 
         foreach (['api', 'frontend', 'news', 'general', 'integration'] as $name) {
-            $this->mergeConfigFrom(__DIR__."/../config/{$name}.php", "forum.{$name}");
+            $this->mergeConfigFrom(config_path("forum.{$name}.php"), "forum.{$name}");
         }
 
 

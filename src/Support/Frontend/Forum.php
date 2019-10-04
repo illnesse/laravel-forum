@@ -101,12 +101,12 @@ class Forum
         return route($route, $params) . $append;
     }
 
-    /**
-     * Register the standard forum routes.
-     *
-     * @param  Router  $router
-     * @return void
-     */
+//    /**
+//     * Register the standard forum routes.
+//     *
+//     * @param  Router  $router
+//     * @return void
+//     */
 //    public static function routes(Router $router)
 //    {
 //        $controllers = config('forum.frontend.controllers');
@@ -149,13 +149,13 @@ class Forum
 //            $router->delete('post', ['as' => 'post.delete', 'uses' => "{$controllers['post']}@bulkDestroy"]);
 //        });
 //    }
-
-    /**
-     * Convert the given string to a URL-friendly slug.
-     *
-     * @param  string  $string
-     * @return string
-     */
+//
+//    /**
+//     * Convert the given string to a URL-friendly slug.
+//     *
+//     * @param  string  $string
+//     * @return string
+//     */
     public static function slugify($string)
     {
         return Str::slug($string, '-');

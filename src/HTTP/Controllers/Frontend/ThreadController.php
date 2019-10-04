@@ -62,7 +62,7 @@ class ThreadController extends BaseController
      * @param  Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function markNew(Request $request)
+    public function markNewAsRead(Request $request)
     {
         $threads = $this->api('thread.mark-new')->parameters($request->only('category_id'))->patch();
 

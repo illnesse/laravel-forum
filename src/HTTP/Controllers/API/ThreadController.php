@@ -159,7 +159,7 @@ class ThreadController extends BaseController
      * @param  Request  $request
      * @return JsonResponse|Response
      */
-    public function markNew(Request $request)
+    public function markNewAsRead(Request $request)
     {
         $this->authorize('markNewThreadsAsRead');
 

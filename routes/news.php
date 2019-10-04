@@ -1,38 +1,43 @@
 <?php
-
-$r->get('/', ['as' => 'category.show', 'uses' => 'CategoryController@shownews']);
-
-$r->get('new', ['as' => 'new.index', 'uses' => 'ThreadController@indexNew']);
-$r->patch('new', ['as' => 'new.mark-read', 'uses' => 'ThreadController@markNewAsRead']);
+$ns = config('forum.news.router.namespace');
+$r->get('/', ['as' => 'category.show', 'uses' => $ns.'CategoryController@shownews']);
+$r->get('new', ['as' => 'new.index', 'uses' => $ns.'ThreadController@indexNew']);
+$r->patch('new', ['as' => 'new.mark-read', 'uses' => $ns.'ThreadController@markNewAsRead']);
 
 $categoryPrefix = config('forum.news.router.category_prefix');
-$r->post($categoryPrefix . '/create', ['as' => 'category.store', 'uses' => 'CategoryController@store']);
-$r->group(['prefix' => $categoryPrefix . '/{category}-{category_slug}'], function ($r) {
-    $r->get('/', ['as' => 'category.show', 'uses' => 'CategoryController@show']);
-    $r->patch('/', ['as' => 'category.update', 'uses' => 'CategoryController@update']);
-    $r->delete('/', ['as' => 'category.delete', 'uses' => 'CategoryController@destroy']);
+$r->post($categoryPrefix . '/create', ['as' => 'category.store', 'uses' => $ns.'CategoryController@store']);
+$r->group(['prefix' => $categoryPrefix . '/{category}-{category_slug}'], function ($r)
+{
+    $ns = config('forum.news.router.namespace');
+    $r->get('/', ['as' => 'category.show', 'uses' => $ns.'CategoryController@show']);
+    $r->patch('/', ['as' => 'category.update', 'uses' => $ns.'CategoryController@update']);
+    $r->delete('/', ['as' => 'category.delete', 'uses' => $ns.'CategoryController@destroy']);
 
-    $r->get('t/create', ['as' => 'thread.create', 'uses' => 'ThreadController@create']);
-    $r->post('t/create', ['as' => 'thread.store', 'uses' => 'ThreadController@store']);
+    $r->get('t/create', ['as' => 'thread.create', 'uses' => $ns.'ThreadController@create']);
+    $r->post('t/create', ['as' => 'thread.store', 'uses' => $ns.'ThreadController@store']);
 });
 
 $threadPrefix = config('forum.news.router.thread_prefix');
-$r->group(['prefix' => $threadPrefix . '/{thread}-{thread_slug}'], function ($r) {
-    $r->get('/', ['as' => 'thread.show', 'uses' => 'ThreadController@show']);
-    $r->patch('/', ['as' => 'thread.update', 'uses' => 'ThreadController@update']);
-    $r->delete('/', ['as' => 'thread.delete', 'uses' => 'ThreadController@destroy']);
+$r->group(['prefix' => $threadPrefix . '/{thread}-{thread_slug}'], function ($r)
+{
+    $ns = config('forum.news.router.namespace');
+    $r->get('/', ['as' => 'thread.show', 'uses' => $ns.'ThreadController@show']);
+    $r->patch('/', ['as' => 'thread.update', 'uses' => $ns.'ThreadController@update']);
+    $r->delete('/', ['as' => 'thread.delete', 'uses' => $ns.'ThreadController@destroy']);
 
-    $r->get('post/{post}', ['as' => 'post.show', 'uses' => 'PostController@show']);
-    $r->get('reply', ['as' => 'post.create', 'uses' => 'PostController@create']);
-    $r->post('reply', ['as' => 'post.store', 'uses' => 'PostController@store']);
-    $r->get('post/{post}/edit', ['as' => 'post.edit', 'uses' => 'PostController@edit']);
-    $r->patch('{post}', ['as' => 'post.update', 'uses' => 'PostController@update']);
-    $r->delete('{post}', ['as' => 'post.delete', 'uses' => 'PostController@destroy']);
+    $r->get('post/{post}', ['as' => 'post.show', 'uses' => $ns.'PostController@show']);
+    $r->get('reply', ['as' => 'post.create', 'uses' => $ns.'PostController@create']);
+    $r->post('reply', ['as' => 'post.store', 'uses' => $ns.'PostController@store']);
+    $r->get('post/{post}/edit', ['as' => 'post.edit', 'uses' => $ns.'PostController@edit']);
+    $r->patch('{post}', ['as' => 'post.update', 'uses' => $ns.'PostController@update']);
+    $r->delete('{post}', ['as' => 'post.delete', 'uses' => $ns.'PostController@destroy']);
 });
 
-$r->group(['prefix' => 'bulk', 'as' => 'bulk.'], function ($r) {
-    $r->patch('thread', ['as' => 'thread.update', 'uses' => 'ThreadController@bulkUpdate']);
-    $r->delete('thread', ['as' => 'thread.delete', 'uses' => 'ThreadController@bulkDestroy']);
-    $r->patch('post', ['as' => 'post.update', 'uses' => 'PostController@bulkUpdate']);
-    $r->delete('post', ['as' => 'post.delete', 'uses' => 'PostController@bulkDestroy']);
+$r->group(['prefix' => 'bulk', 'as' => 'bulk.'], function ($r)
+{
+    $ns = config('forum.news.router.namespace');
+    $r->patch('thread', ['as' => 'thread.update', 'uses' => $ns.'ThreadController@bulkUpdate']);
+    $r->delete('thread', ['as' => 'thread.delete', 'uses' => $ns.'ThreadController@bulkDestroy']);
+    $r->patch('post', ['as' => 'post.update', 'uses' => $ns.'PostController@bulkUpdate']);
+    $r->delete('post', ['as' => 'post.delete', 'uses' => $ns.'PostController@bulkDestroy']);
 });
