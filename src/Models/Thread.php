@@ -205,13 +205,13 @@ class Thread extends BaseModel
      */
     public function markAsRead($userID)
     {
-        if (!$this->old) {
+//        if (!$this->old) {
             if (is_null($this->reader)) {
                 $this->readers()->attach($userID);
             } elseif ($this->updatedSince($this->reader)) {
                 $this->reader->touch();
             }
-        }
+//        }
 
         return $this;
     }
