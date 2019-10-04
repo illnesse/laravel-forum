@@ -25,7 +25,6 @@ class ForumServiceProvider extends ServiceProvider
     public function boot(Router $router, GateContract $gate)
     {
         $this->publishes([
-            __DIR__.'/../config/api.php' => config_path('forum.api.php'),
             __DIR__.'/../config/frontend.php' => config_path('forum.frontend.php'),
             __DIR__.'/../config/news.php' => config_path('forum.news.php'),
             __DIR__.'/../config/general.php' => config_path('forum.general.php'),
@@ -40,15 +39,8 @@ class ForumServiceProvider extends ServiceProvider
             __DIR__.'/../translations/' => resource_path('lang/vendor/forum'),
         ], 'translations');
 
-        foreach (['api', 'frontend', 'news', 'general', 'integration'] as $name) {
+        foreach (['frontend', 'news', 'general', 'integration'] as $name) {
             $this->mergeConfigFrom(config_path("forum.{$name}.php"), "forum.{$name}");
-        }
-
-
-        if (config('forum.api.enabled')) {
-            $router->group(config('forum.api.router'), function ($r) {
-                require __DIR__.'/../routes/api.php';
-            });
         }
 
         if (config('forum.frontend.enabled')) {
