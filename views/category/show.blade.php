@@ -159,7 +159,7 @@
             @can ('markNewThreadsAsRead')
                 <hr>
                 <div class="text-center">
-                    <form action="{{ Forum::route('mark-new') }}" method="POST" data-confirm>
+                    <form action="{{ Forum::route('new.mark-read') }}" method="POST" data-confirm>
                         {!! csrf_field() !!}
                         {!! method_field('patch') !!}
                         <input type="hidden" name="category_id" value="{{ $category->id }}">

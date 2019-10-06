@@ -2,7 +2,7 @@
 $ns = config('forum.news.router.namespace');
 $r->get('/', ['as' => 'category.show', 'uses' => $ns.'CategoryController@shownews']);
 $r->get('new', ['as' => 'new.index', 'uses' => $ns.'ThreadController@indexNew']);
-$r->patch('new', ['as' => 'new.mark-read', 'uses' => $ns.'ThreadController@markNewAsRead']);
+$r->patch('new', ['as' => 'new.mark-read', 'uses' => $ns.'ThreadController@markNew']);
 
 $categoryPrefix = config('forum.news.router.category_prefix');
 $r->post($categoryPrefix . '/create', ['as' => 'category.store', 'uses' => $ns.'CategoryController@store']);

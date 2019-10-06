@@ -2,7 +2,7 @@
 $ns = config('forum.frontend.router.namespace');
 $r->get('/', ['as' => 'index', 'uses' => $ns.'CategoryController@index']);
 $r->get('new', ['as' => 'new.index', 'uses' => $ns.'ThreadController@indexNew']);
-$r->patch('new', ['as' => 'new.mark-read', 'uses' => $ns.'ThreadController@markNewAsRead']);
+$r->patch('new', ['as' => 'new.mark-read', 'uses' => $ns.'ThreadController@markNew']);
 
 $categoryPrefix = config('forum.frontend.router.category_prefix');
 $r->post($categoryPrefix . '/create', ['as' => 'category.store', 'uses' => $ns.'CategoryController@store']);
