@@ -70,16 +70,16 @@ class Forum
                     break;
                 case $model instanceof Thread:
                     $params = [
-                        'category' => $model->category->id,
-                        'category_slug' => static::slugify($model->category->title),
+//                        'category' => $model->category->id,
+//                        'category_slug' => static::slugify($model->category->title),
                         'thread' => $model->id,
                         'thread_slug' => static::slugify($model->title),
                     ];
                     break;
                 case $model instanceof Post:
                     $params = [
-                        'category' => $model->thread->category->id,
-                        'category_slug' => static::slugify($model->thread->category->title),
+//                        'category' => $model->thread->category->id,
+//                        'category_slug' => static::slugify($model->thread->category->title),
                         'thread' => $model->thread->id,
                         'thread_slug' => static::slugify($model->thread->title),
                     ];
