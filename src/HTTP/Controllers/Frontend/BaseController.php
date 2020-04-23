@@ -8,44 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
-use Riari\Forum\Api\Dispatcher;
+use Riari\Forum\API\Dispatcher;
 
 abstract class BaseController extends Controller
 {
+    /*
     use AuthorizesRequests, ValidatesRequests;
 
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * Create a frontend controller instance.
-     */
-    public function __construct()
-    {
-        $this->dispatcher = new Dispatcher($this);
-    }
-
-    /**
-     * Return a prepared API dispatcher instance.
-     *
-     * @param  string  $route
-     * @param  array  $parameters
-     * @return Dispatcher
-     */
-    protected function api($route, $parameters = [])
-    {
-        $prefix = config('forum.routing.as');
-        return $this->dispatcher->route("{$prefix}api.{$route}", $parameters);
-    }
-    /**
-     * Handle a response from the dispatcher for the given request.
-     *
-     * @param  Request  $request
-     * @param  Response  $response
-     * @return Response|mixed
-     */
     public function handleResponse(Request $request, Response $response)
     {
         if ($response->getStatusCode() == 422) {
@@ -63,13 +32,6 @@ abstract class BaseController extends Controller
         return $response->isNotFound() ? abort(404) : $response->getOriginalContent();
     }
 
-    /**
-     * Helper: Bulk action response.
-     *
-     * @param  Collection  $models
-     * @param  string  $transKey
-     * @return \Illuminate\Http\RedirectResponse
-     */
     protected function bulkActionResponse(Collection $models, $transKey)
     {
         if ($models->count()) {
@@ -80,4 +42,5 @@ abstract class BaseController extends Controller
 
         return redirect()->back();
     }
+    */
 }

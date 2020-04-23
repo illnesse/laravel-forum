@@ -1,14 +1,14 @@
 <?php
-$ns = config('forum.frontend.router.namespace');
-$r->get('/', ['as' => 'index', 'uses' => $ns.'CategoryController@index']);
+$ns = config('forum.news.router.namespace');
+$r->get('/', ['as' => 'category.show', 'uses' => $ns.'CategoryController@shownews']);
 $r->get('new', ['as' => 'new.index', 'uses' => $ns.'ThreadController@indexNew']);
 $r->patch('new', ['as' => 'new.mark-read', 'uses' => $ns.'ThreadController@markNew']);
 
-$categoryPrefix = config('forum.frontend.router.category_prefix');
+$categoryPrefix = config('forum.news.router.category_prefix');
 $r->post($categoryPrefix . '/create', ['as' => 'category.store', 'uses' => $ns.'CategoryController@store']);
 $r->group(['prefix' => $categoryPrefix . '/{category}-{category_slug}'], function ($r)
 {
-    $ns = config('forum.frontend.router.namespace');
+    $ns = config('forum.news.router.namespace');
     $r->get('/', ['as' => 'category.show', 'uses' => $ns.'CategoryController@show']);
     $r->patch('/', ['as' => 'category.update', 'uses' => $ns.'CategoryController@update']);
     $r->delete('/', ['as' => 'category.delete', 'uses' => $ns.'CategoryController@destroy']);
@@ -17,10 +17,10 @@ $r->group(['prefix' => $categoryPrefix . '/{category}-{category_slug}'], functio
     $r->post('t/create', ['as' => 'thread.store', 'uses' => $ns.'ThreadController@store']);
 });
 
-$threadPrefix = config('forum.frontend.router.thread_prefix');
+$threadPrefix = config('forum.news.router.thread_prefix');
 $r->group(['prefix' => $threadPrefix . '/{thread}-{thread_slug}'], function ($r)
 {
-    $ns = config('forum.frontend.router.namespace');
+    $ns = config('forum.news.router.namespace');
     $r->get('/', ['as' => 'thread.show', 'uses' => $ns.'ThreadController@show']);
     $r->patch('/', ['as' => 'thread.update', 'uses' => $ns.'ThreadController@update']);
     $r->delete('/', ['as' => 'thread.delete', 'uses' => $ns.'ThreadController@destroy']);
@@ -35,7 +35,7 @@ $r->group(['prefix' => $threadPrefix . '/{thread}-{thread_slug}'], function ($r)
 
 $r->group(['prefix' => 'bulk', 'as' => 'bulk.'], function ($r)
 {
-    $ns = config('forum.frontend.router.namespace');
+    $ns = config('forum.news.router.namespace');
     $r->patch('thread', ['as' => 'thread.update', 'uses' => $ns.'ThreadController@bulkUpdate']);
     $r->delete('thread', ['as' => 'thread.delete', 'uses' => $ns.'ThreadController@bulkDestroy']);
     $r->patch('post', ['as' => 'post.update', 'uses' => $ns.'PostController@bulkUpdate']);

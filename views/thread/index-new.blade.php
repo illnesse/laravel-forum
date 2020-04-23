@@ -51,7 +51,7 @@
 
           @can ('markNewThreadsAsRead')
               <div class="text-center">
-                  <form action="{{ Forum::route('mark-new') }}" method="POST" data-confirm>
+                  <form action="{{ Forum::route('new.mark-read') }}" method="POST" data-confirm>
                       {!! csrf_field() !!}
                       {!! method_field('patch') !!}
                       <button class="btn btn-primary btn-small">{{ trans('forum::general.mark_read') }}</button>

@@ -10,53 +10,93 @@ use Riari\Forum\Events\UserViewingCategory;
 use Riari\Forum\Events\UserViewingIndex;
 use Riari\Forum\Http\Requests\StoreCategory;
 
-use Riari\Forum\Services\CategoryService;
+use Riari\Forum\Models\Category;
+use Riari\Forum\Models\Post;
+use Riari\Forum\Models\Thread;
 
 class CategoryController extends BaseController
 {
-    /** @var CategoryService */
-    protected $service;
+    /*
+    protected $categories;
+    protected $threads;
+    protected $posts;
 
-    public function __construct(CategoryService $service)
+    protected function CategoryModel()
     {
-        $this->service = $service;
+        return new Category;
+    }
+
+    protected function ThreadModel()
+    {
+        return new Thread;
+    }
+
+    protected function PostModel()
+    {
+        return new Post;
+    }
+
+    private function sub_array(array $haystack, array $needle)
+    {
+        return array_intersect_key($haystack, array_flip($needle));
     }
 
     public function index(Request $request): View
     {
-        $categories = $this->service->getAll();
-        // $categories = $this->api('category.index')
-        //                    ->parameters(['where' => ['category_id' => 0], 'orderBy' => 'weight', 'orderDir' => 'asc', 'with' => ['categories', 'threads']])
-        //                    ->get();
-
+        $newsid = config('forum.news.news_category_id');
+        $categories = $this->CategoryModel()->where("id", "!=", $newsid)->get()->sortBy("weight");
         event(new UserViewingIndex);
-
         return view('forum::category.index', compact('categories'));
     }
 
     public function show(Request $request): View
     {
-        $category = $this->service->getByID($request->route('category'));
-
+        $category = $this->CategoryModel()->find($request->category);
         event(new UserViewingCategory($category));
 
         $categories = [];
         if (Gate::allows('moveCategories')) {
-            $categories = $this->service->getTopLevel();
+            $categories = $this->CategoryModel()->all();
         }
 
         $threads = $category->threadsPaginated;
-
         return view('forum::category.show', compact('categories', 'category', 'threads'));
     }
 
+
+    public function shownews(Request $request): View
+    {
+        $newsid = config('forum.news.news_category_id');
+        $category = $this->CategoryModel()->find($newsid);
+        event(new UserViewingCategory($category));
+
+        $categories = [];
+        if (Gate::allows('moveCategories')) {
+            $categories = $this->CategoryModel()->all();
+        }
+
+        $threads = $category->threadsPaginated;
+        return view('forum::category.show', compact('categories', 'category', 'threads'));
+    }
+
+
     public function store(StoreCategory $request): RedirectResponse
     {
-        $category = $this->service->create(
-            $request->only('title', 'description', 'accepts_threads', 'is_private', 'color')
-        );
+         $this->validate($request, [
+             'title'             => ['required']
+         ]);
 
-        // $category = $this->api('category.store')->parameters($request->all())->post();
+        $this->authorize('createCategories');
+
+        $parameters = [
+            'title'         => $request->input('title'),
+            'description'       => $request->input('description'),
+            'accepts_threads'       => $request->input('accepts_threads'),
+            'is_private'       => $request->input('private'),
+            'color'       => $request->input('color')
+        ];
+
+        $category = $this->CategoryModel()->create($parameters);
 
         Forum::alert('success', 'categories.created');
 
@@ -66,20 +106,66 @@ class CategoryController extends BaseController
     public function update(Request $request): RedirectResponse
     {
         $action = $request->input('action');
+        $id = $request->category;
 
-        $category = $this->api("category.{$action}", $request->route('category'))->parameters($request->all())->patch();
+        if ($action == "rename")
+        {
+             $this->authorize('renameCategories');
+             $this->validate($request, ['title' => ['required']]);
+             $category = $this->CategoryModel()->find($id);
+             $this->updateModel($category, $request->only(['title', 'description']));
+        }
+        if ($action == "move")
+        {
+             $this->authorize('moveCategories');
+             $this->validate($request, ['category_id' => ['required']]);
+             $category = $this->CategoryModel()->find($id);
+             $this->updateModel($category, ['category_id' => $request->input('category_id')]);
+        }
+        if ($action == "reorder")
+        {
+             $this->authorize('moveCategories');
+             $this->validate($request, ['weight' => ['required']]);
+             $category = $this->CategoryModel()->find($id);
+             $this->updateModel($category, ['weight' => $request->input('weight')]);
+        }
+        if ($action == "makeprivate")
+        {
+             $this->authorize('createCategories');
+             $category = $this->CategoryModel()->where('private', 0)->find($id);
+             $this->updateModel($category, ['private' => 1]);
+        }
+        if ($action == "makepublic")
+        {
+             $this->authorize('createCategories');
+             $category = $this->CategoryModel()->where('private', 1)->find($id);
+             $this->updateModel($category, ['private' => 0]);
+        }
+        if ($action == "disablethreads")
+        {
+             $category = $this->CategoryModel()->where('enable_threads', 1)->find($id);
+             if (!$category->threads->isEmpty()) {
+                 return $this->buildFailedValidationResponse($request, trans('forum::validation.category_has_no_threads'));
+             }
+             $this->updateModel($category, ['enable_threads' => 0], 'enableThreads');
+        }
+        if ($action == "enablethreads")
+        {
+             $category = $this->CategoryModel()->where('enable_threads', 0)->find($id);
+             return $this->updateModel($category, ['enable_threads' => 1], 'enableThreads');
+        }
 
         Forum::alert('success', 'categories.updated', 1);
-
         return redirect(Forum::route('category.show', $category));
     }
 
     public function destroy(Request $request): RedirectResponse
     {
-        $this->api('category.delete', $request->route('category'))->parameters($request->all())->delete();
+        $this->CategoryModel()->find($request->category)->delete();
 
         Forum::alert('success', 'categories.deleted', 1);
 
-        return redirect(config('forum.routing.prefix'));
+        return redirect(config('forum.frontend.router.prefix'));
     }
+    */
 }

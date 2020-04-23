@@ -27,7 +27,7 @@ class Category extends BaseModel
 	 *
 	 * @var array
 	 */
-    protected $fillable = ['title', 'description', 'accepts_threads', 'is_private', 'color', 'thread_count', 'post_count'];
+    protected $fillable = ['title', 'description', 'accepts_threads', 'is_private', 'color', 'weight', 'thread_count', 'post_count'];
 
     /**
      * Create a new category model instance.
@@ -37,7 +37,7 @@ class Category extends BaseModel
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->perPage = config('forum.preferences.pagination.categories');
+        $this->perPage = config('forum.general.pagination.categories');
     }
 
     /**
