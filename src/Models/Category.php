@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Gate;
 use Kalnoy\Nestedset\NodeTrait;
 use Riari\Forum\Support\Traits\CachesData;
 
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
+
 class Category extends BaseModel
 {
     use CachesData, NodeTrait;
@@ -120,5 +123,17 @@ class Category extends BaseModel
 
             return $depth;
         });
+    }
+
+    public function getSearchResult(): SearchResult
+    {
+//        $isnews = ($this->id == config('forum.news.news_category_id'));
+//        $prefix = $isnews ? "news" : "forum";
+
+        return new \Spatie\Searchable\SearchResult(
+            $this,
+            $this->title,
+            Forum::route('category.show', $this)
+        );
     }
 }
