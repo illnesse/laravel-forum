@@ -4,7 +4,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Riari\Forum\Models\Traits\HasAuthor;
 use Riari\Forum\Support\Traits\CachesData;
 
-class Post extends BaseModel
+use Spatie\Searchable\Searchable;
+use Spatie\Searchable\SearchResult;
+
+class Post extends BaseModel implements Searchable
 {
     use SoftDeletes, HasAuthor, CachesData;
 
@@ -91,4 +94,17 @@ class Post extends BaseModel
             }
         }
     }
+
+    public function getSearchResult(): SearchResult
+    {
+//        $isnews = ($this->id == config('forum.news.news_category_id'));
+//        $prefix = $isnews ? "news" : "forum";
+
+        return new \Spatie\Searchable\SearchResult(
+            $this,
+            $this->content,
+            Forum::route('post.show', $this)
+        );
+    }
+
 }

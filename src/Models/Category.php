@@ -7,7 +7,7 @@ use Riari\Forum\Support\Traits\CachesData;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
-class Category extends BaseModel
+class Category extends BaseModel implements Searchable
 {
     use CachesData, NodeTrait;
 
