@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Gate;
 use Kalnoy\Nestedset\NodeTrait;
 use Riari\Forum\Support\Traits\CachesData;
 
+use Riari\Forum\Support\Frontend\Forum;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -127,7 +128,7 @@ class Category extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        $slug = Riari\Forum\Support\Frontend\Forum::slugify($this->title);
+        $slug = Forum::slugify($this->title);
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,
