@@ -133,7 +133,7 @@ class Category extends BaseModel implements Searchable
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,
-            Forum::route('category.show', $this)
+            route('forum.category.show', $this)
         );
     }
 }
