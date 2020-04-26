@@ -127,13 +127,11 @@ class Category extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-//        $isnews = ($this->id == config('forum.news.news_category_id'));
-//        $prefix = $isnews ? "news" : "forum";
-
+        $slug = Riari\Forum\Support\Frontend\Forum::slugify($this->title);
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,
-            route('forum.category.show', $this)
+            route('forum.category.show', ["category"=>$this,"category_slug"=>$slug])
         );
     }
 }
