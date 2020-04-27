@@ -225,7 +225,7 @@ class Thread extends BaseModel implements Searchable
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,
-            route('forum.thread.show', $this)
+            Forum::route('thread.show', $this)
         );
     }
 

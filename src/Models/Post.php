@@ -101,7 +101,7 @@ class Post extends BaseModel implements Searchable
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->content,
-            route('forum.post.show', $this)
+            Forum::route('post.show', $this)
         );
     }
 
