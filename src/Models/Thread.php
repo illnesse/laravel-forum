@@ -7,6 +7,7 @@ use Riari\Forum\Models\Post;
 use Riari\Forum\Models\Traits\HasAuthor;
 use Riari\Forum\Support\Traits\CachesData;
 
+use Riari\Forum\Support\Frontend\Forum;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
@@ -221,9 +222,6 @@ class Thread extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-//        $isnews = ($this->id == config('forum.news.news_category_id'));
-//        $prefix = $isnews ? "news" : "forum";
-
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,

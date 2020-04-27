@@ -128,11 +128,10 @@ class Category extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        $slug = Forum::slugify($this->title);
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,
-            route('forum.category.show', ["category"=>$this,"category_slug"=>$slug])
+            Forum::route('category.show', $this)
         );
     }
 }
