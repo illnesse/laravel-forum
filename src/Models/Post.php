@@ -8,7 +8,7 @@ use Riari\Forum\Support\Frontend\Forum;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
-use Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Post extends BaseModel implements Searchable
 {
