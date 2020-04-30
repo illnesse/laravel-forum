@@ -54,7 +54,7 @@ class Post extends BaseModel implements Searchable
 
     public function category()
     {
-        return $this->thread->belongsTo(Category::class);
+        return $this->thread()->belongsTo(Category::class);
     }
 
     /**
