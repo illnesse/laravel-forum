@@ -11,8 +11,6 @@ use Riari\Forum\Support\Frontend\Forum;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
-use Illuminate\Database\Eloquent\Model;
-
 class Thread extends BaseModel implements Searchable
 {
     use SoftDeletes, HasAuthor, CachesData;
@@ -224,7 +222,6 @@ class Thread extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        if (!$this->category || $this->trashed()) return new \Spatie\Searchable\SearchResult(new Thread,"","");
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,

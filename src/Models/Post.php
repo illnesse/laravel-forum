@@ -8,8 +8,6 @@ use Riari\Forum\Support\Frontend\Forum;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
-use Illuminate\Database\Eloquent\Model;
-
 class Post extends BaseModel implements Searchable
 {
     use SoftDeletes, HasAuthor, CachesData;
@@ -100,7 +98,6 @@ class Post extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        if (!$this->thread->category || !$this->thread || $this->trashed() || $this->thread->trashed())  return new \Spatie\Searchable\SearchResult(new Post,"","");
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->content,
