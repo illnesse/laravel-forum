@@ -98,7 +98,7 @@ class Post extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        if (!$this->thread->category || !$this->thread || $this->trashed() || $this->thread->trashed()) return null; //new \Spatie\Searchable\SearchResult(null,"","")
+        if (!$this->thread->category || !$this->thread || $this->trashed() || $this->thread->trashed())  return new \Spatie\Searchable\SearchResult(new \Spatie\Searchable\Searchable,"","");
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->content,
