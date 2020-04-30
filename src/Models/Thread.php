@@ -222,7 +222,7 @@ class Thread extends BaseModel implements Searchable
 
     public function getSearchResult(): SearchResult
     {
-        if (!$this->category || $this->trashed()) return;
+        if (!$this->category || $this->trashed()) return new \Spatie\Searchable\SearchResult(null,"","");
         return new \Spatie\Searchable\SearchResult(
             $this,
             $this->title,
