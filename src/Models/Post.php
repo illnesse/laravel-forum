@@ -8,6 +8,8 @@ use Riari\Forum\Support\Frontend\Forum;
 use Spatie\Searchable\Searchable;
 use Spatie\Searchable\SearchResult;
 
+use Eloquent\Model;
+
 class Post extends BaseModel implements Searchable
 {
     use SoftDeletes, HasAuthor, CachesData;
