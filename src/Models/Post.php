@@ -52,6 +52,11 @@ class Post extends BaseModel implements Searchable
         return $this->belongsTo(Thread::class)->withTrashed();
     }
 
+    public function category()
+    {
+        return $this->thread->belongsTo(Category::class);
+    }
+
     /**
      * Relationship: Parent post.
      *
